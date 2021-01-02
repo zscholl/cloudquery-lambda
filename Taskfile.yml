@@ -1,0 +1,11 @@
+version: '3'
+
+tasks:
+  docker:build:
+    desc: Builds the docker image
+    cmds:
+      - docker build -t cloudquery-lambda:latest .
+  docker:run:
+    desc: Runs the docker image locally
+    cmds:
+      - docker run -p 8080:8080 cloudquery-lambda:latest     
