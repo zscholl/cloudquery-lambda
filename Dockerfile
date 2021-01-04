@@ -1,10 +1,11 @@
-FROM golang:1.15 as build
-RUN mkdir /app
-ADD . /app
+FROM golang:1-alpine as build
+RUN apk update && apk add build-base
 WORKDIR /app
-RUN go build -o /main
+ADD . ./
+RUN go build -o main
 
-FROM public.ecr.aws/lambda/go:1
-COPY config.yml ${LAMBDA_TASK_ROOT}
-COPY --from=build /main ${LAMBDA_TASK_ROOT}
-CMD [ "main" ]
+FROM alpine:latest
+WORKDIR /app
+COPY config.yml ./
+COPY --from=build /app/main ./main
+ENTRYPOINT [ "/app/main" ]

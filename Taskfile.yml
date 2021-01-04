@@ -8,4 +8,16 @@ tasks:
   docker:run:
     desc: Runs the docker image locally
     cmds:
-      - docker run -p 8080:8080 cloudquery-lambda:latest     
+      - docker run cloudquery-lambda:latest /app/main fetch
+  test:docker:build:
+    desc: Builds the test docker image with the aws lambda runtime environment
+    cmds:
+      - docker build -t cloudquery-lambda:test -f Dockerfile.test .
+  test:docker:run:
+    desc: Runs the test docker image
+    cmds:
+      - |
+        docker run -p 8080:8080 -v "$HOME/.aws":/root/.aws \
+        -e AWS_REGION=us-west-2 -e AWS_PROFILE=cloudquery-test \
+        -e CLOUDQUERY_DRIVER=mysql -e CLOUDQUERY_DATABASE_STRING= \
+        cloudquery-lambda:test
